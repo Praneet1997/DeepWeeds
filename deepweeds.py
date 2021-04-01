@@ -35,13 +35,14 @@ IMG_ZIP_FILE = "./images/images.zip"
 RAW_IMG_SIZE = (256, 256)
 IMG_SIZE = (224, 224)
 INPUT_SHAPE = (IMG_SIZE[0], IMG_SIZE[1], 3)
-MAX_EPOCH = 200
-BATCH_SIZE = 32
+MAX_EPOCH = 5
+BATCH_SIZE = 256
 FOLDS = 5
 STOPPING_PATIENCE = 32
 LR_PATIENCE = 16
 INITIAL_LR = 0.0001
 CLASSES = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+CLASSES_str = ['0', '1', '2', '3', '4', '5', '6', '7', '8']
 CLASS_NAMES = ['Chinee Apple',
                'Lantana',
                'Parkinsonia',
@@ -163,9 +164,9 @@ def cross_validate(model_name):
         train_label_file = "{}train_subset{}.csv".format(LABEL_DIRECTORY, k)
         val_label_file = "{}val_subset{}.csv".format(LABEL_DIRECTORY, k)
         test_label_file = "{}test_subset{}.csv".format(LABEL_DIRECTORY, k)
-        train_dataframe = pd.read_csv(train_label_file)
-        val_dataframe = pd.read_csv(val_label_file)
-        test_dataframe = pd.read_csv(test_label_file)
+        train_dataframe = pd.read_csv(train_label_file,dtype=str)
+        val_dataframe = pd.read_csv(val_label_file,dtype=str)
+        test_dataframe = pd.read_csv(test_label_file,dtype=str)
         train_image_count = train_dataframe.shape[0]
         val_image_count = train_dataframe.shape[0]
         test_image_count = test_dataframe.shape[0]
@@ -204,7 +205,7 @@ def cross_validate(model_name):
             target_size=RAW_IMG_SIZE,
             batch_size=BATCH_SIZE,
             has_ext=True,
-            classes=CLASSES,
+            classes=CLASSES_str,
             class_mode='categorical')
 
         # Load validation images in batches from directory and apply rescaling
@@ -216,7 +217,7 @@ def cross_validate(model_name):
             target_size=RAW_IMG_SIZE,
             batch_size=BATCH_SIZE,
             has_ext=True,
-            classes=CLASSES,
+            classes=CLASSES_str,
             class_mode='categorical')
 
         # Load test images in batches from directory and apply rescaling
@@ -229,7 +230,7 @@ def cross_validate(model_name):
             batch_size=BATCH_SIZE,
             has_ext=True,
             shuffle=False,
-            classes=CLASSES,
+            classes=CLASSES_str,
             class_mode='categorical')
 
         # Crop augmented images from 256x256 to 224x224
